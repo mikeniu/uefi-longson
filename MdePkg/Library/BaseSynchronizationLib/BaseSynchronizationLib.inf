@@ -1,0 +1,133 @@
+## @file
+#  Base Synchronization Library implementation.
+#
+#  Copyright (c) 2018 Loongson Technology Corporation Limited (www.loongson.cn).
+#  All intellectual property rights(Copyright, Patent and Trademark) reserved.
+#  Copyright (c) 2007 - 2016, Intel Corporation. All rights reserved.<BR>
+#  Portions copyright (c) 2008 - 2009, Apple Inc. All rights reserved.<BR>
+#
+#  Any violations of copyright or other intellectual property rights of the Loongson
+#  Technology Corporation Limited will be held accountable in accordance with the law,
+#  if you (or any of your subsidiaries, corporate affiliates or agents) initiate directly
+#  or indirectly any Intellectual Property Assertion or Intellectual Property Litigation:
+#  (i) against Loongson Technology Corporation Limited or any of its subsidiaries or corporate affiliates,
+#  (ii) against any party if such Intellectual Property Assertion or Intellectual Property Litigation arises
+#  in whole or in part from any software, technology, product or service of Loongson Technology Corporation Limited
+#  or any of its subsidiaries or corporate affiliates, or (iii) against any party relating to the Software.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR AS IS AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+#  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+#  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION).
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = BaseSynchronizationLib
+  MODULE_UNI_FILE                = BaseSynchronizationLib.uni
+  FILE_GUID                      = FC9990DF-C5FF-44cf-8799-CBB45B577F87
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = SynchronizationLib
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC ARM AARCH64
+#
+[Sources]
+  BaseSynchronizationLibInternals.h
+
+[Sources.IA32]
+  Ia32/InternalGetSpinLockProperties.c | MSFT
+  Ia32/InterlockedCompareExchange64.c | MSFT 
+  Ia32/InterlockedCompareExchange32.c | MSFT 
+  Ia32/InterlockedCompareExchange16.c | MSFT
+  Ia32/InterlockedDecrement.c | MSFT 
+  Ia32/InterlockedIncrement.c | MSFT 
+  SynchronizationMsc.c  | MSFT
+
+  Ia32/InterlockedCompareExchange64.nasm| INTEL
+  Ia32/InterlockedCompareExchange64.asm | INTEL 
+  Ia32/InterlockedCompareExchange32.nasm| INTEL
+  Ia32/InterlockedCompareExchange32.asm | INTEL 
+  Ia32/InterlockedCompareExchange16.nasm| INTEL
+  Ia32/InterlockedCompareExchange16.asm | INTEL
+  Ia32/InterlockedDecrement.nasm| INTEL
+  Ia32/InterlockedDecrement.asm | INTEL 
+  Ia32/InterlockedIncrement.nasm| INTEL
+  Ia32/InterlockedIncrement.asm | INTEL 
+  Synchronization.c | INTEL
+
+  Ia32/InternalGetSpinLockProperties.c | GCC
+  Ia32/GccInline.c | GCC
+  SynchronizationGcc.c  | GCC
+
+[Sources.X64]
+  Ia32/InternalGetSpinLockProperties.c | MSFT
+  X64/InterlockedCompareExchange64.c | MSFT
+  X64/InterlockedCompareExchange32.c | MSFT
+  X64/InterlockedCompareExchange16.c | MSFT
+  
+  X64/InterlockedCompareExchange64.nasm| INTEL
+  X64/InterlockedCompareExchange64.asm | INTEL
+  X64/InterlockedCompareExchange32.nasm| INTEL
+  X64/InterlockedCompareExchange32.asm | INTEL
+  X64/InterlockedCompareExchange16.nasm| INTEL
+  X64/InterlockedCompareExchange16.asm | INTEL
+  
+  X64/InterlockedDecrement.c | MSFT 
+  X64/InterlockedIncrement.c | MSFT 
+  SynchronizationMsc.c | MSFT 
+
+  X64/InterlockedDecrement.nasm| INTEL
+  X64/InterlockedDecrement.asm | INTEL 
+  X64/InterlockedIncrement.nasm| INTEL
+  X64/InterlockedIncrement.asm | INTEL 
+  Synchronization.c | INTEL 
+
+  Ia32/InternalGetSpinLockProperties.c | GCC
+  X64/GccInline.c | GCC
+  SynchronizationGcc.c  | GCC 
+
+[Sources.IPF]
+  Ipf/Synchronization.c
+  Ipf/InterlockedCompareExchange64.s
+  Ipf/InterlockedCompareExchange32.s
+  Ipf/InterlockedCompareExchange16.s
+
+  Ipf/InternalGetSpinLockProperties.c | MSFT
+  Ipf/InternalGetSpinLockProperties.c | GCC
+
+  Synchronization.c     | INTEL 
+  SynchronizationMsc.c  | MSFT 
+  SynchronizationGcc.c  | GCC 
+
+[Sources.EBC]
+  Synchronization.c
+  Ebc/Synchronization.c
+
+[Sources.ARM]
+  Synchronization.c
+  Arm/Synchronization.asm       | RVCT
+  Arm/Synchronization.S         | GCC
+
+[Sources.AARCH64]
+  Synchronization.c
+  AArch64/Synchronization.S
+
+[Sources.LOONGARCH64]
+  Synchronization.c
+  LoongArch/Synchronization.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  PcdLib
+  TimerLib
+  DebugLib
+  BaseMemoryLib
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdSpinLockTimeout  ## SOMETIMES_CONSUMES
+

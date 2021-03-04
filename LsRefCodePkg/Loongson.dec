@@ -1,0 +1,227 @@
+## @file
+#
+#  Copyright (c) 2018 Loongson Technology Corporation Limited (www.loongson.cn).
+#  All intellectual property rights(Copyright, Patent and Trademark) reserved.
+#
+#  Any violations of copyright or other intellectual property rights of the Loongson Technology
+#  Corporation Limited will be held accountable in accordance with the law,
+#  if you (or any of your subsidiaries, corporate affiliates or agents) initiate
+#  directly or indirectly any Intellectual Property Assertion or Intellectual Property Litigation:
+#  (i) against Loongson Technology Corporation Limited or any of its subsidiaries or corporate affiliates,
+#  (ii) against any party if such Intellectual Property Assertion or Intellectual Property Litigation arises
+#  in whole or in part from any software, technology, product or service of Loongson Technology Corporation
+#  Limited or any of its subsidiaries or corporate affiliates, or (iii) against any party relating to the Software.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+#  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR
+#  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION).
+#
+##
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = LoongsonPlatform
+  PACKAGE_GUID                   = acc5232d-7385-4ec5-8004-69dfd8945e4d
+  PACKAGE_VERSION                = 0.1
+
+################################################################################
+#
+# Include Section - list of Include Paths that are provided by this package.
+#                   Comments are used for Keywords and Module Types.
+#
+# Supported Module Types:
+#  BASE SEC PEI_CORE PEIM DXE_CORE DXE_DRIVER DXE_RUNTIME_DRIVER DXE_SMM_DRIVER DXE_SAL_DRIVER UEFI_DRIVER UEFI_APPLICATION
+#
+################################################################################
+[Includes.common]
+ Include                        # Root include for the package
+
+[LibraryClasses.common]
+  EfiResetSystemLib|Include/Library/EfiResetSystemLib.h
+  MonitorLib|Include/Library/MonitorLib.h
+  MpInitLib|Include/Library/MpInitLib.h
+  CsrLib|Include/Library/CsrLib.h
+  # BaseCryptLib|Universal/Capsule/Include/BaseCryptLib/Library/BaseCryptLib.h
+
+[Ppis]
+ gEfiTemporaryRamSupportPpiGuid                     = { 0xdbe23aa9, 0xa345, 0x4b97, { 0x85, 0xb6, 0xb2, 0x26, 0xf1, 0x61, 0x73, 0x89 } }
+ gEfiPeiMemParamPpiGuid                             = { 0x4CA1F8DE, 0x683E, 0x2447, { 0xA3, 0x02, 0x25, 0x82, 0x37, 0xA4, 0x23, 0xB2 } }
+ gEfiPeiLsPlatformTablePpiGuid                      = { 0x2b8e27c6, 0x8b33, 0x4ad0, { 0xb5, 0xa6, 0x05, 0x0c, 0xb4, 0xc4, 0x10, 0x32 } }
+ gEfiLs3aPlatformTablePpiGuid                       = { 0x8C6E9477, 0xEE4A, 0xADA0, { 0xC3, 0x80, 0xE9, 0xB8, 0x64, 0x55, 0x4E, 0x50 } }
+ gEfiLs7aPlatformTablePpiGuid                       = { 0xBFCBEA5A, 0x1B9B, 0xE098, { 0x08, 0xDD, 0x89, 0x7F, 0xE2, 0x76, 0x32, 0x05 } }
+ gEfiHdaVerbTablePpiGuid                            = { 0x43DD4E3B, 0x049B, 0x2287, { 0x65, 0xC5, 0x31, 0xC5, 0x4C, 0xF1, 0x65, 0x5C } }
+ gEfiMemConfigPpiGuid                               = { 0x56A9F5C8, 0x9A19, 0x854C, { 0x01, 0xA6, 0x13, 0x35, 0xDE, 0x25, 0x38, 0xFC } }
+ gEfiLsRcCorePpiGuid                                = { 0x3A5CE085, 0xDE30, 0x4D9D, { 0x96, 0x73, 0xA3, 0xDE, 0xDA, 0xF1, 0xF2, 0x4E } }
+
+[Guids]
+  gUefiLoongsonPlatformPkgTokenSpaceGuid            = { 0x10611d9f, 0x0b85, 0x41d2, { 0xa7, 0xbe, 0x5f, 0x01, 0x9c, 0xf9, 0x78, 0xf8 } }
+  gEfiLoongsonPlatformPkgTokenSpaceGuid             = { 0xeee10395, 0xa2fe, 0x4250, { 0xa3, 0xa5, 0x41, 0xd0, 0xb1, 0x92, 0x63, 0x7e } }
+  gEfiLoongsonPlatformPkgTokenSpaceGuid             = { 0xeee10395, 0xa2fe, 0x4250, { 0xa3, 0xa5, 0x41, 0xd0, 0xb1, 0x92, 0x63, 0x7e } }
+  gEfiOemGlobalDataGuid                             = { 0xdb56e93f, 0xc5ef, 0x4888, { 0x80, 0x06, 0xf6, 0x4d, 0xbc, 0xbb, 0xf7, 0x55 } }
+  gEfiOemGlobalData2Guid                            = { 0xdb56e93f, 0xc5ef, 0x4888, { 0x80, 0x06, 0xf6, 0x4d, 0xbc, 0xbb, 0x11, 0x22 } }
+  gEfiLoongsonBootparamsTableGuid                   = { 0x4660f721, 0x2ec5, 0x416a, { 0x89, 0x9a, 0x43, 0x18, 0x02, 0x50, 0xa0, 0xc9 } }
+  gEfiBmcGlobalDataGuid                             = { 0xdb561290, 0xc5ef, 0x4888, { 0x80, 0x06, 0xf6, 0x4d, 0xbc, 0xbb, 0xf7, 0x55 } }
+  gEfiBmcGlobalData1Guid                            = { 0xdaf32031, 0x159f, 0x41a8, { 0x40, 0x02, 0x26, 0x7d, 0x0c, 0x1b, 0xa7, 0x25 } }
+  gSATA0ClockVendorGuid                             = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf2, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gSATA1ClockVendorGuid                             = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf3, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gSATA2ClockVendorGuid                             = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf4, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gUSB0ClockVendorGuid                              = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf5, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gUSB1ClockVendorGuid                              = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf6, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gGMAC0ClockVendorGuid                             = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf7, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gGMAC1ClockVendorGuid                             = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf8, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gWakeGmacClockVendorGuid                          = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf9, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gWakePcieClockVendorGuid                          = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf9, 0x10, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gWakeUsbClockVendorGuid                           = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf9, 0x12, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gWakeRtcClockVendorGuid                           = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf9, 0x13, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gDvfsClockVendorGuid                              = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf9, 0x12, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gF0ClockVendorGuid                                = { 0xbbe5bcaf, 0x40da, 0x42cc, { 0x8c, 0x9b, 0xf1, 0x11, 0xb2, 0xa3, 0x3e, 0x6e } }
+  gF1ClockVendorGuid                                = { 0xbf605711, 0xbeb8, 0x4274, { 0x84, 0xb8, 0x0f, 0x9c, 0xb4, 0x13, 0x21, 0x4c } }
+  gG0ClockVendorGuid                                = { 0xaf5f9ca3, 0x85f7, 0x4b77, { 0x96, 0x8f, 0x03, 0x91, 0xdf, 0xea, 0x56, 0x9f } }
+  gG1ClockVendorGuid                                = { 0xdc0d9f84, 0xe97e, 0x4a8f, { 0x93, 0xa4, 0x45, 0xe5, 0xcc, 0x83, 0x2e, 0x69 } }
+  gHClockVendorGuid                                 = { 0x2891837d, 0x9de9, 0x4d3c, { 0xbd, 0xb1, 0x18, 0x9c, 0x8d, 0x0f, 0xfb, 0xca } }
+  gPcieF0ModeVendorGuid                             = { 0xd41f515b, 0xac31, 0x41b8, { 0xb2, 0x1b, 0xe1, 0xad, 0x36, 0xf5, 0x30, 0x28 } }
+  gPcieF1ModeVendorGuid                             = { 0xcd697dcb, 0x9fae, 0x4553, { 0x8b, 0x64, 0x4f, 0x04, 0x52, 0x67, 0x6b, 0xe7 } }
+  gPcieG0ModeVendorGuid                             = { 0x9a41b399, 0x1672, 0x415e, { 0xaa, 0x83, 0x16, 0xb7, 0x39, 0xf5, 0xa0, 0xe3 } }
+  gPcieG1ModeVendorGuid                             = { 0xffc2a6ce, 0xaad8, 0x44ba, { 0xb6, 0xd2, 0x7b, 0x2c, 0x8b, 0x96, 0x6a, 0x5c } }
+  gPcieHModeVendorGuid                              = { 0xb328f5dd, 0x9927, 0x46b3, { 0x80, 0x37, 0x06, 0xbb, 0xef, 0x0e, 0xea, 0xd3 } }
+  gEnableSiTestVendorGuid                           = { 0x353a1823, 0xac70, 0x4c07, { 0x9a, 0x35, 0xa8, 0xef, 0x27, 0x8d, 0x58, 0xaa } }
+  gPcieReConfigVendorGuid                           = { 0x7a368a44, 0xac85, 0x4dd9, { 0x9f, 0x5c, 0xda, 0x1e, 0xaf, 0x7b, 0x86, 0x5a } }
+  gLsCpuInfoHobGuid                                 = { 0xEF6A3B45, 0x5B30, 0x45D0, { 0xAE, 0xCD, 0x28, 0x2B, 0x9E, 0x3D, 0x45, 0x2B } }
+  gLsMemInfoHobGuid                                 = { 0xF3CC27DD, 0x2838, 0x78A7, { 0xCB, 0xFE, 0xA3, 0x7F, 0x2E, 0x85, 0x1D, 0x32 } }
+  gSetDateAndTimeFormSetGuid                        = { 0xb41b7aa9, 0x5085, 0x5e38, { 0xb9, 0xe7, 0x62, 0xfb, 0x53, 0xe4, 0xe8, 0x06 } }
+  #  Include/Guid/LoongsonFrameworkModulePkgTokenSpace.h
+  gEfiLoongsonFrameworkModulePkgTokenSpaceGuid      = { 0xD3705011, 0xBC19, 0x4af7, { 0xBE, 0x16, 0xF6, 0x80, 0x30, 0x37, 0x8C, 0x15 } }
+  ## GUID identifies Data Hub records logged by Status Code Runtime Protocol.
+  #  Include/Guid/DataHubStatusCodeRecord.h
+  gEfiDataHubStatusCodeRecordGuid                   = { 0xD083E94C, 0x6560, 0x42E4, { 0xB6, 0xD4, 0x2D, 0xF7, 0x5A, 0xDF, 0x6A, 0x2A } }
+  ## Include/Guid/LegacyDevOrder.h
+  gEfiLegacyDevOrderVariableGuid                    = { 0xa56074db, 0x65fe, 0x45f7, { 0xbd, 0x21, 0x2d, 0x2b, 0xdd, 0x8e, 0x96, 0x52 } }
+  gFrontPageFormSetGuid                             = { 0x9e0c30bc, 0x3f06, 0x4ba6, { 0x82, 0x88, 0x9,  0x17, 0x9b, 0x85, 0x5d, 0xbe } }
+  gBootMaintFormSetGuid                             = { 0x642237c7, 0x35d4, 0x472d, { 0x83, 0x65, 0x12, 0xe0, 0xcc, 0xf2, 0x7a, 0x22 } }
+  gBootManagerFormSetGuid                           = { 0x847bc3fe, 0xb974, 0x446d, { 0x94, 0x49, 0x5a, 0xd5, 0x41, 0x2e, 0x99, 0x3b } }
+  gDeviceManagerFormSetGuid                         = { 0x3ebfa8e6, 0x511d, 0x4b5b, { 0xa9, 0x5f, 0xfb, 0x38, 0x26, 0xf,  0x1c, 0x27 } }
+  gDriverHealthFormSetGuid                          = { 0xf76e0a70, 0xb5ed, 0x4c38, { 0xac, 0x9a, 0xe5, 0xf5, 0x4b, 0xf1, 0x6e, 0x34 } }
+  gFileExploreFormSetGuid                           = { 0x1f2d63e1, 0xfebd, 0x4dc7, { 0x9c, 0xc5, 0xba, 0x2b, 0x1c, 0xef, 0x9c, 0x5b } }
+  gDeviceListFormSetGuid                            = { 0xa5f25c17, 0x0a47, 0x53ef, { 0xbe, 0xe6, 0xc8, 0x17, 0xfc, 0xf1, 0x95, 0x36 } }
+  ## Include/Guid/BdsLibHii.h
+  gBdsLibStringPackageGuid                          = { 0x3b4d9b23, 0x95ac, 0x44f6, { 0x9f, 0xcd, 0xe,  0x95, 0x94, 0x58, 0x6c, 0x72 } }
+  ## Include/Guid/LastEnumLang.h
+  gLastEnumLangGuid                                 = { 0xe8c545b,  0xa2ee, 0x470d, { 0x8e, 0x26, 0xbd, 0xa1, 0xa1, 0x3c, 0xa,  0xa3 } }
+  gHdBootDevicePathVariablGuid                      = { 0xfab7e9e1, 0x39dd, 0x4f2b, { 0x84, 0x8,  0xe2, 0xe,  0x90, 0x6c, 0xb6, 0xde } }
+  gLoongsonTokenSpaceGuid       = { 0xBB11ECFE, 0x820F, 0x4968, { 0xBB, 0xA6, 0xF7, 0x6A, 0xFE, 0x30, 0x25, 0x96 } }
+
+[Protocols]
+  gEfiDebugSupportPeriodicCallbackProtocolGuid      = { 0x9546e07c, 0x2cbb, 0x4c88, { 0x98, 0x6c, 0xcd, 0x34, 0x10, 0x86, 0xf0, 0x44 } }
+  gFlashDeviceOperationProtocolGuid                 = { 0x3F50F196, 0x7A09, 0x4F16, { 0x84, 0xB0, 0xDA, 0xEC, 0xA5, 0x6F, 0x29, 0x6D } }
+  gEfiPasswordProtocolGuid                          = { 0x391744da, 0xdf88, 0x413b, { 0x96, 0x1b, 0xf2, 0x4f, 0x0f, 0x87, 0xbc, 0x23 } }
+  gEfiLoadRawFileProtocolGuid                       = { 0xA1AE60DA, 0xCFC5, 0x43A0, { 0x95, 0xBD, 0xE9, 0x42, 0x92, 0x3F, 0x81, 0xA0 } }
+  gEfiPciDeviceProtocolGuid                         = { 0x5558591e, 0xaf12, 0x48cb, { 0x9c, 0xab, 0xc2, 0x3f, 0x23, 0x6f, 0x9d, 0x08 } }
+  gEfiLsServiceProtocolGuid                         = { 0xD1BBCA87, 0x310D, 0xCF91, { 0x33, 0xA5, 0x72, 0x3A, 0xF8, 0xA2, 0x11, 0x63 } }
+  gEfiLsRTServiceProtocolGuid                       = { 0x1685BBAD, 0x310D, 0xCF91, { 0x33, 0xA5, 0x72, 0x3A, 0xF8, 0xA2, 0x11, 0x63 } }
+  ## Vga Mini port binding for a VGA controller
+  #  Include/Protocol/VgaMiniPort.h
+  gEfiVgaMiniPortProtocolGuid                       = { 0xc7735a2f, 0x88f5, 0x4882, { 0xae, 0x63, 0xfa, 0xac, 0x8c, 0x8b, 0x86, 0xb3 } }
+  ## Include/Protocol/DataHub.h
+  gEfiDataHubProtocolGuid                           = { 0xae80d021, 0x618e, 0x11d4, { 0xbc, 0xd7, 0x00, 0x80, 0xc7, 0x3c, 0x88, 0x81 } }
+  ## ISA Acpi Protocol is used to operate and communicate with ISA device.
+  #  Include/Protocol/IsaAcpi.h
+  gEfiIsaAcpiProtocolGuid                           = { 0x64a892dc, 0x5561, 0x4536, { 0x92, 0xc7, 0x79, 0x9b, 0xfc, 0x18, 0x33, 0x55 } }
+  ## Include/Protocol/LegacyBios.h
+  gEfiLegacyBiosProtocolGuid                        = { 0xdb9a1e3d, 0x45cb, 0x4abb, { 0x85, 0x3b, 0xe5, 0x38, 0x7f, 0xdb, 0x2e, 0x2d } }
+  ## OEM Badging Protocol defines the interface to get the OEM badging image with the dispaly attribute.
+  #  Include/Protocol/OEMBadging.h
+  gEfiOEMBadgingProtocolGuid                        = { 0x170E13C0, 0xBF1B, 0x4218, { 0x87, 0x1D, 0x2A, 0xBD, 0xC6, 0xF8, 0x87, 0xBC } }
+
+[PcdsFixedAtBuild, PcdsDynamic]
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashFdBase|0x0|UINT64|0
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashFdSize|0x0|UINT32|1
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashBlockSize|0x0|UINT32|2
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashPeiFvBase|0x0|UINT64|0x00000003
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashPeiFvSize|0x0|UINT32|0x00000004
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashDxeFvOffset|0x0|UINT64|0x00000007
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashDxeFvBase|0x0|UINT64|0x00000008
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashDxeFvSize|0x0|UINT32|0x00000009
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashSecModuleBase|0x0|UINT64|0x0000000a
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashSecModuleSize|0x0|UINT32|0x0000000b
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashEventLogBase|0x0|UINT64|0x0000000c
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashEventLogSize|0x0|UINT32|0x0000000d
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdMemoryModLdKrnlBssBase|0xffffffff800d0000|UINT64|0x0000000e
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdMemoryModLdKrnlBssSize|0x00008000|UINT32|0x0000000f
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdSecCacheAsRamBase|0|UINT64|0x00000010
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdSecCacheAsRamSize|0|UINT32|0x00000011
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdMemPeiFvBase|0|UINT64|0x00000012
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdMemPeiFvSize|0|UINT32|0x00000013
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdMemDxeFvBase|0|UINT64|0x00000014
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdMemDxeFvSize|0|UINT32|0x00000015
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize|0|UINT32|0x00000016
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdPeiCodeRamBase|0|UINT64|0x00000017
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdPeiCodeRamSize|0|UINT32|0x00000018
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashSuspendOffset|0x0|UINT32|0x00000001b
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFrontSideBusMemBase|0x0|UINT64|0x00000001c
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdChipsetMiscBase|0x0|UINT64|0x00000001d
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdAcpiRegBase|0x0|UINT64|0x00000001e
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdReservedMemBase|0x0|UINT64|0x00000001f
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdLoongsonPlatformBootTimeOut|0x3|UINT16|0x000000020
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdIntegratedGraphicsPciMemSize|0x0|UINT32|0x000000021
+gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableBase64|0x0 | UINT64 |0x00000220
+gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize|0x0 |UINT32  |0x00000019
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdRamRegionsBottom|0x0|UINT64|0x000000221
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdRamRegionsTop|0x0|UINT64|0x000000222
+gUefiLoongsonPlatformPkgTokenSpaceGuid.FvHeaderOffset|0x0|UINT64|0x000000223
+gEmbeddedTokenSpaceGuid.PcdEmbeddedAutomaticBootCommand|L""|VOID*|0x00000007
+
+[PcdsFixedAtBuild.LOONGARCH64]
+   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32|UINT8|0x00000010
+   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0|UINT8|0x00000011
+
+[PcdsDynamic]
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdSystemMemorySize|512|UINT32|0x00000019
+gEfiLoongsonPlatformPkgTokenSpaceGuid.PcdFrameBuffer|0|UINT64|0x00000015
+gEfiLoongsonPlatformPkgTokenSpaceGuid.PcdLoongsonPlatformFirmwareBlockSize|0|UINT32|0x00001013
+gEfiLoongsonPlatformPkgTokenSpaceGuid.PcdMemoryFvMainBase|0x83300000|UINT32|0x00000005
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdFlashFvHeaderOffset|0x0|UINT32|0x00000006
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdMemEccEnable|0x0|UINT8|0xf0007
+
+[PcdsFeatureFlag]
+gUefiLoongsonPlatformPkgTokenSpaceGuid.PcdSupportGop|TRUE|BOOLEAN|0x0000001a
+
+## Indicates if OEM device is enabled as StatusCode report device.
+#  It is only used in Framework StatusCode implementation. <BR><BR>
+#   TRUE  - Enable OEM device.<BR>
+#   FALSE - Disable OEM device.<BR>
+# @Prompt Report StatusCode via OEM Device
+gEfiLoongsonFrameworkModulePkgTokenSpaceGuid.PcdStatusCodeUseOEM|FALSE|BOOLEAN|0x00010024
+
+## Indicates if StatusCode report is loged into DataHub.<BR><BR>
+#   TRUE  - Log StatusCode report into DataHub.<BR>
+#   FALSE - Does not log StatusCode report into DataHub.<BR>
+# @Prompt Log StatusCode into DataHub
+gEfiLoongsonFrameworkModulePkgTokenSpaceGuid.PcdStatusCodeUseDataHub|FALSE|BOOLEAN|0x00010029
+
+## Indicates if only Boot logo is showed and all message output is disabled in BDS.<BR><BR>
+#   TRUE  - Only Boot Logo is showed in boot.<BR>
+#   FALSE - All messages and Boot Logo are showed in boot.<BR>
+# @Prompt Enable Boot Logo only
+gEfiLoongsonFrameworkModulePkgTokenSpaceGuid.PcdBootlogoOnlyEnable|FALSE|BOOLEAN|0x00010048
+
+[PcdsFixedAtBuild, PcdsPatchableInModule]
+## FFS filename to find the shell application.
+# @Prompt FFS Name of Shell Application
+gEfiLoongsonFrameworkModulePkgTokenSpaceGuid.PcdShellFile|{ 0xB7, 0xD6, 0x7A, 0xC5, 0x15, 0x05, 0xA8, 0x40, 0x9D, 0x21, 0x55, 0x16, 0x52, 0x85, 0x4E, 0x37 }|VOID*|0x40000004
+## This value is the CPU Local APIC base address, which aligns the address on a 4-KByte boundary.
+# @Prompt Configure base address of CPU Local APIC
+# @Expression  0x80000001 | (gUefiCpuPkgTokenSpaceGuid.PcdCpuLocalApicBaseAddress & 0xfff) == 0
+gLoongsonTokenSpaceGuid.PcdCpuLocalApicAddress|0x1fe01400|UINT32|0x00000002
+
+## FFS filename to find the default BMP Logo file.
+# @Prompt FFS Name of Boot Logo File
+gEfiLoongsonFrameworkModulePkgTokenSpaceGuid.PcdLogoFile |{ 0x99, 0x8b, 0xB2, 0x7B, 0xBB, 0x61, 0xD5, 0x11, 0x9A, 0x5D, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D }|VOID*|0x40000003
+
+[PcdsDynamic, PcdsDynamicEx]
+## Indicates if the machine has completed one boot cycle before.
+#  After the complete boot, BootState will be set to FALSE.<BR><BR>
+#   TRUE  - The complete boot cycle has not happened before.<BR>
+#   FALSE - The complete boot cycle has happened before.<BR>
+# @Prompt Boot State Flag
+gEfiLoongsonFrameworkModulePkgTokenSpaceGuid.PcdBootState|TRUE|BOOLEAN|0x0001002f

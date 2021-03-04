@@ -1,0 +1,89 @@
+## @file
+#
+#  Copyright (c) 2018 Loongson Technology Corporation Limited (www.loongson.cn).
+#  All intellectual property rights(Copyright, Patent and Trademark) reserved.
+#
+#  Any violations of copyright or other intellectual property rights of the Loongson Technology
+#  Corporation Limited will be held accountable in accordance with the law,
+#  if you (or any of your subsidiaries, corporate affiliates or agents) initiate
+#  directly or indirectly any Intellectual Property Assertion or Intellectual Property Litigation:
+#  (i) against Loongson Technology Corporation Limited or any of its subsidiaries or corporate affiliates,
+#  (ii) against any party if such Intellectual Property Assertion or Intellectual Property Litigation arises
+#  in whole or in part from any software, technology, product or service of Loongson Technology Corporation
+#  Limited or any of its subsidiaries or corporate affiliates, or (iii) against any party relating to the Software.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+#  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR
+#  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION).
+#
+##
+
+#######################################################################
+#
+# this is a disassembly tool,convenient to debug
+#
+# input Params:
+#       $1: filename    :*.dll that you want disassembly module
+#       $2: address     :entrypoint address that *.efi entry point address of low 32 bit,if 64 bit will error
+#       $3: gcc version :our platform support gcc44 or gcc49
+
+# output file:
+#       a:filename.asm     :asm file that original deal with *.dll file
+#       b:filename.asm.ld :asm file that link entry point address
+#
+# note:
+#     if the module type is Sec the entry point address is 9fc11094
+#     if the module type is't Sec please find this module(*.efi) entry point address that low 32 bit address as $2 params.
+#
+# sample:
+#       ./DebugTool SecMain.dll 9fc11094 gcc44
+#       ./DebugTool BootparamsDxe.dll 0E647240 gcc49
+#
+#######################################################################
+
+#!/bin/sh
+
+BINFILE=$1.bin
+ASMFILE=$1.asm
+
+if  [[ ! -f `find ./ -name $ASMFILE` || ! -f `find ./ -name $ASMFILE.ld` ]];then
+echo
+else
+echo $ASMFILE.ld already exiting will rm it.
+  rm -rf $ASMFILE
+  rm -rf $ASMFILE.ld
+fi
+
+if [ "$3" == "gcc44" ]; then
+/opt/gcc-4.4.0-pmon/bin/mipsel-linux-objcopy -O binary $1 $BINFILE
+/opt/gcc-4.4.0-pmon/bin/mipsel-linux-objdump -D -b binary -m mips $BINFILE > $ASMFILE
+elif [ "$3" == "gcc49" ]; then
+/opt/cross-gcc-4.9.3-n64-loongson-rc6.1/usr/bin/mips64el-loongson-linux-objcopy -O binary $1 $BINFILE
+/opt/cross-gcc-4.9.3-n64-loongson-rc6.1/usr/bin/mips64el-loongson-linux-objdump -D -b binary -m mips $BINFILE > $ASMFILE
+fi
+
+cat $ASMFILE | while read LINE
+do
+  if [[ `echo $LINE |grep ':' |wc -l` -ne 0 && `echo $LINE |grep '<.data>:' |wc -l` -le 0 ]];
+  then
+    a=`echo ${LINE}|cut -d ':' -f1`
+    if [[ $a == *[0-9]* ]]; then
+    let b=0x$a
+    let plus=0x$2
+    ((c=$b+$plus))
+    d=`echo "obase=16;$c"|bc`
+    e=`tr '[A-Z]' '[a-z]' <<<"$d"`
+    mm=`echo ${LINE}|cut -d ':' -f2`
+    new="${e}:${mm}"
+    echo $new >> $ASMFILE.ld
+  fi
+  else
+    echo $LINE >> $ASMFILE.ld
+  fi
+done
+
+rm -rf $BINFILE
+
+exit $?
+

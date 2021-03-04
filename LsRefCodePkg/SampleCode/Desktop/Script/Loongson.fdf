@@ -1,0 +1,609 @@
+## @file
+#
+#  Copyright (c) 2018 Loongson Technology Corporation Limited (www.loongson.cn).
+#  All intellectual property rights(Copyright, Patent and Trademark) reserved.
+#
+#  Any violations of copyright or other intellectual property rights of the Loongson Technology
+#  Corporation Limited will be held accountable in accordance with the law,
+#  if you (or any of your subsidiaries, corporate affiliates or agents) initiate
+#  directly or indirectly any Intellectual Property Assertion or Intellectual Property Litigation:
+#  (i) against Loongson Technology Corporation Limited or any of its subsidiaries or corporate affiliates,
+#  (ii) against any party if such Intellectual Property Assertion or Intellectual Property Litigation arises
+#  in whole or in part from any software, technology, product or service of Loongson Technology Corporation
+#  Limited or any of its subsidiaries or corporate affiliates, or (iii) against any party relating to the Software.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+#  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR
+#  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION).
+#
+##
+
+#####################################################################################################
+
+[Defines]
+!include Loongson.fdf.inc
+
+#####################################################################################################
+!if ($(PLATFORM_NAME) == Ls3a50007a)
+[FD.LS3A50007A]
+!endif
+
+BaseAddress   = $(FD_BASE_ADDRESS)
+Size          = $(FD_SIZE)
+ErasePolarity = 1
+BlockSize     = $(BLOCK_SIZE)
+NumBlocks     = $(FD_BLOCKS)
+
+!include VarStore.fdf.inc
+
+$(SECFV_OFFSET)|$(SECFV_SIZE)
+FV = SECFV
+
+$(PEIFV_OFFSET)|$(PEIFV_SIZE)
+FV = PEIFV
+
+$(DXEFV_OFFSET)|$(DXEFV_SIZE)
+FV = FVMAIN_COMPACT
+
+#####################################################################################################
+[FD.MEMFD]
+BaseAddress   = $(MEM_CODE_BASE_ADDRESS)
+Size          = $(MEM_CODE_SIZE)
+ErasePolarity = 1
+BlockSize     = 0x10000
+NumBlocks     = $(MEM_CODE_BLOCKS)
+
+
+$(MEM_CODE_START)|$(MEM_CODE_HANDLERTABLESIZE)
+gEfiMdePkgTokenSpaceGuid.PcdGuidedExtractHandlerTableAddress|gUefi$(PLATFORMPKG_NAME)PkgTokenSpaceGuid.PcdGuidedExtractHandlerTableSize
+
+$(CACHE_CODE_PEIFV_OFFSET)|$(CACHE_CODE_PEIFV_SIZE)
+gUefi$(PLATFORMPKG_NAME)PkgTokenSpaceGuid.PcdMemPeiFvBase|gUefi$(PLATFORMPKG_NAME)PkgTokenSpaceGuid.PcdMemPeiFvSize
+FV = PEIFV
+
+$(MEM_CODE_DXEFV_OFFSET)|$(MEM_CODE_DXEFV_SIZE)
+gUefi$(PLATFORMPKG_NAME)PkgTokenSpaceGuid.PcdMemDxeFvBase|gUefi$(PLATFORMPKG_NAME)PkgTokenSpaceGuid.PcdMemDxeFvSize
+FV = DXEFV
+
+#####################################################################################################
+[FV.SECFV]
+FvNameGuid         = 763BED0D-DE9F-48F5-81F1-3E90E1B1A015
+FvBaseAddress      = $(FLASH_CODE_SECFV_BASE_ADDRESS)
+BlockSize          = 0x10000
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+INF LsRefCodePkg/Core/SecMain/SecMain.inf
+
+#####################################################################################################
+[FV.PEIFV]
+FvNameGuid         = 6938079B-B503-4E3D-9D24-B28337A25806
+FvBaseAddress      = $(CACHE_CODE_PEIFV_BASE_ADDRESS)
+BlockSize          = 0x1000
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+
+APRIORI PEI {
+  INF  MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+!if $(CAPSULE_ENABLE)
+  INF  LsRefCodePkg/Universal/Capsule/CapsulePei/CapsulePei.inf
+!endif
+}
+
+#
+#  PEI Phase modules
+#
+!if $(CAPSULE_ENABLE)
+  # FMP image decriptor
+INF RuleOverride = FMP_IMAGE_DESC LsRefCodePkg/Universal/Capsule/SystemFirmwareDescriptor/SystemFirmwareDescriptor.inf
+!endif
+
+
+INF  MdeModulePkg/Core/Pei/PeiMain.inf
+INF  MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+INF  LsRefCodePkg/Universal/Capsule/CapsulePei/CapsulePei.inf
+INF  LsRefCodePkg/Universal/StatusCode/Pei/StatusCodePei.inf
+INF  MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
+INF  LsRefCodePkg/Universal/Variable/VariablePei/VariablePei.inf
+INF  LsRefCodePkg/SampleCode/Desktop/Ls3aPlatformTable/Pei/PeiLs3aPlatformTableInit.inf
+INF  LsRefCodePkg/SampleCode/Desktop/Ls7aPlatformTable/Pei/PeiLs7aPlatformTableInit.inf
+INF  LsRefCodePkg/SampleCode/Desktop/HdaVerbTable/HdaVerbTablePpi.inf
+!if $(MRC_BINARY)
+INF  LsRefCodePkg/MRC/Binary/MemConfigPpi.inf
+!else
+INF  LsRefCodePkg/MRC/source/MemConfigPpi.inf
+!endif
+INF  LsRefCodePkg/Core/RcCorePpi/RcCorePpi.inf
+INF  LsRefCodePkg/SampleCode/Desktop/CustomedPpi/CustomedPpi.inf
+INF  LsRefCodePkg/SampleCode/PlatformInitPei/PlatformInitPei.inf
+
+#####################################################################################################
+[FV.DXEFV]
+FvNameGuid         = 7CB8BDC9-F8EB-4F34-AAEA-3EE4AF6516A1
+FvBaseAddress      = $(MEM_CODE_DXEFV_BASE_ADDRESS)
+BlockSize          = 0x10000
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+
+APRIORI DXE {
+  INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
+  INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+  INF  LsRefCodePkg/Drivers/PowerButtonEventDxe/PowerButtonEventDxe.inf
+  #
+  # Loongson Service
+  #
+  INF  LsRefCodePkg/Core/LsServiceDxe/LsServiceDxe.inf
+  INF  LsRefCodePkg/Core/LsServiceDxe/LsRTServiceDxe.inf
+  #
+  # Variable
+  #
+  INF  LsRefCodePkg/Drivers/FlashService/FlashService.inf
+  INF  LsRefCodePkg/Drivers/FvBlockService/FvBlockService.inf
+  INF  LsRefCodePkg/Universal/Variable/VariableDxe/VariableRuntimeDxe.inf
+}
+
+#
+# DXE Phase modules
+#
+
+
+INF  MdeModulePkg/Core/Dxe/DxeMain.inf
+
+INF  LsRefCodePkg/Universal/StatusCode/RuntimeDxe/StatusCodeRuntimeDxe.inf
+INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
+INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+INF  LsRefCodePkg/Core/Arch/Ls3a/CpuDxe/CpuDxe.inf
+INF  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
+INF  LsRefCodePkg/Core/Arch/Ls3a/StableTimerDxe/TimerDxe.inf
+INF  MdeModulePkg/Universal/Metronome/Metronome.inf
+INF  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
+INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
+INF  LsRefCodePkg/Drivers/ResetRuntimeDxe/ResetRuntimeDxe.inf
+INF  LsRefCodePkg/Drivers/PowerButtonEventDxe/PowerButtonEventDxe.inf
+INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
+INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
+INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+INF  LsRefCodePkg/Drivers/BootParamsInterfaceDxe/BootParamsInterfaceDxe.inf
+INF  LsRefCodePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+INF  LsRefCodePkg/SampleCode/Desktop/SmbiosTable/SmbiosTable.inf
+INF  LsRefCodePkg/Universal/RealTimeClockRuntimeDxe/LoongArchRealTimeClockRuntimeDxe.inf
+INF  LsRefCodePkg/Drivers/LoadRawFile/LoadRawFile.inf
+
+#
+# Loongson Service
+#
+INF  LsRefCodePkg/Core/LsServiceDxe/LsServiceDxe.inf
+INF  LsRefCodePkg/Core/LsServiceDxe/LsRTServiceDxe.inf
+
+#
+# Variable
+#
+INF  LsRefCodePkg/Drivers/FlashService/FlashService.inf
+INF  LsRefCodePkg/Drivers/FvBlockService/FvBlockService.inf
+INF  LsRefCodePkg/Universal/Variable/VariableDxe/VariableRuntimeDxe.inf
+
+#
+# PCI
+#
+INF  LsRefCodePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+INF  LsRefCodePkg/Bus/Pci/PciHostBridgeDxe/PciHostBridgeDxe.inf
+INF  LsRefCodePkg/Bus/Pci/PciDeviceDxe/PciDeviceDxe.inf
+
+#
+# InitLs7aPcieVariable
+#
+INF   LsRefCodePkg/Drivers/InitLs7aPcieVariableDxe/InitLs7aPcieVariableDxe.inf
+
+#
+#
+# ISA Support
+#
+INF  LsRefCodePkg/Drivers/IsaAcpiDxe/IsaAcpi.inf
+INF  MdeModulePkg/Universal/SerialDxe/SerialDxe.inf
+
+#
+# Console
+#
+INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+INF  LsRefCodePkg/Drivers/Console/ConSplitterDxe/ConSplitterDxe.inf
+!if $(COMP_TYPE) == DEBUG
+  INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+!endif
+
+#
+#DC
+#
+INF   LsRefCodePkg/Drivers/LsGraphics/Graphics.inf
+
+#
+#Video
+#
+INF  LsRefCodePkg/Library/int10/x86emu.inf
+INF  LsRefCodePkg/Drivers/BiosVideoThunkDxe/BiosVideo.inf
+INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+
+#
+# IDE
+#
+INF  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
+INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
+INF  MdeModulePkg/Bus/Pci/SataControllerDxe/SataControllerDxe.inf
+INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+INF  MdeModulePkg/Bus/Pci/NvmExpressDxe/NvmExpressDxe.inf
+#
+# Usb Support
+#
+INF LsRefCodePkg/Bus/Pci/OhciDxe/OhciDxe.inf
+#INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
+INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+INF  LsRefCodePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+
+#
+#BDS
+#
+INF  LsRefCodePkg/Universal/DisplayEngineDxe/DisplayEngineDxe.inf
+INF  LsRefCodePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
+INF  LsRefCodePkg/Drivers/DeviceManagerDxe/DeviceManagerDxe.inf
+INF  LsRefCodePkg/Drivers/ShowTimeDxe/ShowTime.inf
+INF  LsRefCodePkg/Universal/BdsDxe/BdsDxe.inf
+INF  LsRefCodePkg/Universal/Logo/LogoDxe.inf
+INF  LsRefCodePkg/Application/UiApp/UiApp.inf
+
+#
+# ACPI Support
+#
+INF  LsRefCodePkg/SampleCode/Desktop/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+INF  LsRefCodePkg/SampleCode/Desktop/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
+INF  RuleOverride = ACPITABLE LsRefCodePkg/SampleCode/Desktop/Acpi/AcpiTables/AcpiTables.inf
+#INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
+#INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+#INF  MdeModulePkg/Universal/Acpi/BootGraphicsResourceTableDxe/BootGraphicsResourceTableDxe.inf
+
+#
+# Network modules
+#
+!if $(NETWORK_SUPPORT) == TRUE
+  INF  MdeModulePkg/Universal/Network/SnpDxe/SnpDxe.inf
+  INF  MdeModulePkg/Universal/Network/DpcDxe/DpcDxe.inf
+  INF  MdeModulePkg/Universal/Network/MnpDxe/MnpDxe.inf
+  INF  MdeModulePkg/Universal/Network/VlanConfigDxe/VlanConfigDxe.inf
+  INF  MdeModulePkg/Universal/Network/ArpDxe/ArpDxe.inf
+  INF  MdeModulePkg/Universal/Network/Dhcp4Dxe/Dhcp4Dxe.inf
+  INF  MdeModulePkg/Universal/Network/Ip4Dxe/Ip4Dxe.inf
+  INF  MdeModulePkg/Universal/Network/Mtftp4Dxe/Mtftp4Dxe.inf
+  INF  MdeModulePkg/Universal/Network/Udp4Dxe/Udp4Dxe.inf
+  INF  MdeModulePkg/Universal/Network/Tcp4Dxe/Tcp4Dxe.inf
+  INF  MdeModulePkg/Universal/Network/UefiPxeBcDxe/UefiPxeBcDxe.inf
+  INF  MdeModulePkg/Universal/Network/IScsiDxe/IScsiDxe.inf
+  INF  LsRefCodePkg/Drivers/GmacUndiDxe/GmacUndiDxe.inf
+  INF  GigUndiDxe/GigUndiDxe.inf
+#INF  RtkUndiDxe/RtkUndiDxe.inf
+!if $(HTTP_BOOT_ENABLE) == TRUE
+  INF  NetworkPkg/DnsDxe/DnsDxe.inf
+  INF  NetworkPkg/HttpDxe/HttpDxe.inf
+  INF  NetworkPkg/HttpBootDxe/HttpBootDxe.inf
+!endif
+!endif
+
+#
+# File system
+#
+INF FatPkg/EnhancedFatDxe/Fat.inf
+INF LsRefCodePkg/Drivers/FsDxe/FsDxe.inf
+#
+#Boot OS
+#
+
+INF ShellPkg/Application/Shell/Shell.inf
+
+!if $(CAPSULE_ENABLE)
+INF  MdeModulePkg/Universal/EsrtDxe/EsrtDxe.inf
+INF  SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareReportDxe.inf
+
+FILE FREEFORM = PCD(gEfiSignedCapsulePkgTokenSpaceGuid.PcdEdkiiPkcs7TestPublicKeyFileGuid) {
+     SECTION RAW = BaseTools/Source/Python/Pkcs7Sign/TestRoot.cer
+     SECTION UI = "Pkcs7TestRoot"
+     }
+!endif
+
+#
+#logo
+#
+FILE FREEFORM = 7BB28B99-61BB-11D5-9A5D-0090273FC14D {
+  SECTION RAW = LsRefCodePkg/Universal/Logo/Logo.bmp
+}
+
+#####################################################################################################
+[FV.FVMAIN_COMPACT]
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
+   SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
+     SECTION FV_IMAGE = DXEFV
+   }
+ }
+
+#######################################################################################################
+!if $(CAPSULE_ENABLE)
+
+[FV.CapsuleDispatchFv]
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+INF  SignedCapsulePkg/Universal/SystemFirmwareUpdate/SystemFirmwareUpdateDxe.inf
+
+[FV.SystemFirmwareUpdateCargo]
+FvAlignment        = 16
+ERASE_POLARITY     = 1
+MEMORY_MAPPED      = TRUE
+STICKY_WRITE       = TRUE
+LOCK_CAP           = TRUE
+LOCK_STATUS        = TRUE
+WRITE_DISABLED_CAP = TRUE
+WRITE_ENABLED_CAP  = TRUE
+WRITE_STATUS       = TRUE
+WRITE_LOCK_CAP     = TRUE
+WRITE_LOCK_STATUS  = TRUE
+READ_DISABLED_CAP  = TRUE
+READ_ENABLED_CAP   = TRUE
+READ_STATUS        = TRUE
+READ_LOCK_CAP      = TRUE
+READ_LOCK_STATUS   = TRUE
+
+FILE RAW = 5151a274-2614-4ea7-c660-2dbe3ca2ccb3 { # PcdEdkiiSystemFirmwareFileGuid
+    !if ($(PLATFORM_NAME) == Ls3a30007a)
+    FD=LS3A30007A
+    !endif
+    !if ($(PLATFORM_NAME) == Ls3a40007a)
+    FD=LS3A40007A
+    !endif
+    !if ($(PLATFORM_NAME) == Ls3a50007a)
+    FD=LS3A50007A
+    !endif
+  }
+
+FILE RAW = ce57b167-b0e4-41e8-a897-5f4feb781d40 { # gEdkiiSystemFmpCapsuleDriverFvFileGuid
+    FV = CapsuleDispatchFv
+  }
+
+FILE RAW = 812136D3-4D3A-433A-9418-29BB9BF78F6E { # gEdkiiSystemFmpCapsuleConfigFileGuid
+    LsRefCodePkg/Universal/Capsule/SystemFirmwareUpdateConfig/SystemFirmwareUpdateConfig.ini
+  }
+!endif
+
+!if $(CAPSULE_ENABLE)
+[FmpPayload.FmpPayloadSystemFirmwarePkcs7]
+IMAGE_HEADER_INIT_VERSION = 0x02
+IMAGE_TYPE_ID             = 5f17196b-7bc3-c816-7ea8-c837d33e0715 # PcdSystemFmpCapsuleImageTypeIdGuid
+IMAGE_INDEX               = 0x1
+HARDWARE_INSTANCE         = 0x0
+MONOTONIC_COUNT           = 0x2
+CERTIFICATE_GUID          = 4AAFD29D-68DF-49EE-8AA9-347D375665A7 # PKCS7
+
+FV = SystemFirmwareUpdateCargo
+
+#Flags :
+#PersistAcrossReset   0x00010000
+#PopulateSystemTable  0x00020000
+#InitiateReset        0x00040000
+[Capsule.LsCapsuleFmpPkcs7]
+CAPSULE_GUID                = 6dcbd5ed-e82d-4c44-bda1-7194199ad92a # gEfiFmpCapsuleGuid
+# CAPSULE_FLAGS               = PersistAcrossReset,InitiateReset
+CAPSULE_FLAGS               = PersistAcrossReset
+CAPSULE_HEADER_SIZE         = 0x20
+CAPSULE_HEADER_INIT_VERSION = 0x1
+
+FMP_PAYLOAD = FmpPayloadSystemFirmwarePkcs7
+!endif
+
+
+#####################################################################################################
+[Rule.LOONGARCH64.SEC]
+  FILE SEC = $(NAMED_GUID) {
+    PE32     PE32           $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+
+#####################################################################################################
+[Rule.LOONGARCH64.PEI_CORE]
+  FILE PEI_CORE = $(NAMED_GUID) {
+    PE32     PE32   Align=Auto    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.PEIM]
+  FILE PEIM = $(NAMED_GUID) {
+     PEI_DEPEX PEI_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+     PE32      PE32   Align=Auto         $(INF_OUTPUT)/$(MODULE_NAME).efi
+     UI       STRING="$(MODULE_NAME)" Optional
+     VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.DXE_CORE]
+  FILE DXE_CORE = $(NAMED_GUID) {
+    PE32     PE32           $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING="$(MODULE_NAME)" Optional
+    VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.DXE_DRIVER]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX    DXE_DEPEX Optional      $(INF_OUTPUT)/$(MODULE_NAME).depex
+    PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING="$(MODULE_NAME)" Optional
+    VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.DXE_RUNTIME_DRIVER]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX    DXE_DEPEX Optional      $(INF_OUTPUT)/$(MODULE_NAME).depex
+    PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING="$(MODULE_NAME)" Optional
+    VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.UEFI_DRIVER]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX    DXE_DEPEX Optional      $(INF_OUTPUT)/$(MODULE_NAME).depex
+    PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING="$(MODULE_NAME)" Optional
+    VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.UEFI_DRIVER.BINARY]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX DXE_DEPEX Optional      |.depex
+    PE32      PE32                    |.efi
+    UI        STRING="$(MODULE_NAME)" Optional
+    VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.UEFI_APPLICATION]
+  FILE APPLICATION = $(NAMED_GUID) {
+    PE32     PE32                    $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING="$(MODULE_NAME)" Optional
+    VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.UEFI_APPLICATION.BINARY]
+  FILE APPLICATION = $(NAMED_GUID) {
+    PE32      PE32                    |.efi
+    UI        STRING="$(MODULE_NAME)" Optional
+    VERSION   STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.USER_DEFINED.ACPITABLE]
+  FILE FREEFORM = $(NAMED_GUID) {
+    RAW ACPI               |.acpi
+    RAW ASL                |.aml
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.USER_DEFINED.CSM]
+  FILE FREEFORM = $(NAMED_GUID) {
+    RAW BIN                |.bin
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.SEC.RESET_VECTOR]
+  FILE RAW = $(NAMED_GUID) {
+    RAW BIN   Align = 16   |.bin
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.PEIM.BINARY]
+  FILE PEIM = $(NAMED_GUID) {
+     PEI_DEPEX PEI_DEPEX Optional        |.depex
+     PE32      PE32   Align=Auto         |.efi
+     UI       STRING="$(MODULE_NAME)" Optional
+     VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+#####################################################################################################
+[Rule.LOONGARCH64.DXE_DRIVER.BINARY]
+  FILE DRIVER = $(NAMED_GUID) {
+    DXE_DEPEX    DXE_DEPEX Optional      |.depex
+    PE32         PE32                    |.efi
+  }
+####################################################################################################
+[Rule.LOONGARCH64.PEIM.FMP_IMAGE_DESC]
+  FILE PEIM = $(NAMED_GUID) {
+       RAW BIN                  |.acpi
+       PEI_DEPEX PEI_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+       PE32      PE32    Align=4K          $(INF_OUTPUT)/$(MODULE_NAME).efi
+       UI       STRING="$(MODULE_NAME)" Optional
+       VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }

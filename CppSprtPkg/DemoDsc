@@ -1,0 +1,33 @@
+CppAppDemo.inf {
+  <LibraryClasses>
+    CppSprtLib|CppSprtPkg/Library/CppSprtLib.inf
+    ShellCEntryLib|ShellPkg/Library/UefiShellCEntryLib/UefiShellCEntryLib.inf
+    #
+    # C Standard Libraries
+    #
+    LibC          | StdLib/LibC/LibC.inf
+    LibStdio      | StdLib/LibC/Stdio/Stdio.inf
+    LibCType      | StdLib/LibC/Ctype/Ctype.inf
+    LibLocale     | StdLib/LibC/Locale/Locale.inf
+    LibMath       | StdLib/LibC/Math/Math.inf
+    LibSignal     | StdLib/LibC/Signal/Signal.inf
+    LibStdLib     | StdLib/LibC/StdLib/StdLib.inf
+    LibString     | StdLib/LibC/String/String.inf
+    LibTime       | StdLib/LibC/Time/Time.inf
+    LibUefi       | StdLib/LibC/Uefi/Uefi.inf
+    LibWchar      | StdLib/LibC/Wchar/Wchar.inf
+    LibIIO        | StdLib/LibC/Uefi/InteractiveIO/IIO.inf
+    LibContainer  | StdLib/LibC/Containers/ContainerLib.inf
+    # Additional libraries for POSIX functionality.
+    LibErr        | StdLib/PosixLib/Err/LibErr.inf
+    LibGen        | StdLib/PosixLib/Gen/LibGen.inf
+    LibGlob       | StdLib/PosixLib/Glob/LibGlob.inf
+    LibStringlist | StdLib/PosixLib/Stringlist/LibStringlist.inf
+    # Libraries for device abstractions within the Standard C Library
+    # Applications should not directly access any functions defined in these libraries.
+    LibGdtoa      | StdLib/LibC/gdtoa/gdtoa.inf
+    DevConsole    | StdLib/LibC/Uefi/Devices/daConsole.inf
+    DevShell      | StdLib/LibC/Uefi/Devices/daShell.inf
+    DevUtility    | StdLib/LibC/Uefi/Devices/daUtility.inf
+    ShellLib      | ShellPkg/Library/UefiShellLib/UefiShellLib.inf
+}

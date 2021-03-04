@@ -1,0 +1,44 @@
+FS0:\> echo -on
+FS0:\> set Var_EFCF356F_228C_47C2_AD0C_3B5DAC9A8CFA      ValueOfGuid
+FS0:\> set Sharp_E8528E46_A008_4221_8DE0_D5AB42A9C580    ^#
+FS0:\> set Quote_E95DEE8B_E3AA_4155_9ED5_6916394104FC    ^"
+FS0:\> set Var_ShellCTestApp_EE6E8BC6_71A6_44A5_BED3_D8F901105CDE ShellCTestApp_EE6E8BC6_71A6_44A5_BED3_D8F901105CDE
+FS0:\> alias ShellCTestApp_EE6E8BC6_71A6_44A5_BED3_D8F901105CDE   ShellCTestApp
+FS0:\> ShellCTestApp ^^
+Argv[1]: "^"
+FS0:\> ShellCTestApp ^#
+Argv[1]: "#"
+FS0:\> ShellCTestApp ^%Var_EFCF356F_228C_47C2_AD0C_3B5DAC9A8CFA%
+Argv[1]: "%Var_EFCF356F_228C_47C2_AD0C_3B5DAC9A8CFA%"
+FS0:\> ShellCTestApp ^"
+Argv[1]: """
+FS0:\> ShellCTestApp ^ 1
+Argv[1]: " 1"
+FS0:\> ShellCTestApp ^ 
+Argv[1]: ""
+FS0:\> ShellCTestApp ^1
+Argv[1]: "1"
+FS0:\> ShellCTestApp ^^^"
+Argv[1]: "^""
+FS0:\> ShellCTestApp ^^^
+Argv[1]: "^"
+FS0:\> ShellCTestApp 
+Argv[1] = NULL
+FS0:\> ShellCTestApp %Sharp_E8528E46_A008_4221_8DE0_D5AB42A9C580%
+Argv[1]: "#"
+FS0:\> ShellCTestApp "%Var_EFCF356F_228C_47C2_AD0C_3B5DAC9A8CFA% 2%Quote_E95DEE8B_E3AA_4155_9ED5_6916394104FC%
+Argv[1]: "ValueOfGuid 2"
+FS0:\> %Var_ShellCTestApp_EE6E8BC6_71A6_44A5_BED3_D8F901105CDE%
+Argv[1] = NULL
+FS0:\> ShellCTestApp "p   1"
+Argv[1]: "p   1"
+FS0:\> ShellCTestApp "p"1
+Argv[1]: "p1"
+FS0:\> ShellCTestApp "p   1"e"x"""
+Argv[1]: "p   1ex"
+FS0:\> set -d Var_EFCF356F_228C_47C2_AD0C_3B5DAC9A8CFA
+FS0:\> set -d Sharp_E8528E46_A008_4221_8DE0_D5AB42A9C580
+FS0:\> set -d Quote_E95DEE8B_E3AA_4155_9ED5_6916394104FC
+FS0:\> set -d Var_ShellCTestApp_EE6E8BC6_71A6_44A5_BED3_D8F901105CDE
+FS0:\> alias -d ShellCTestApp_EE6E8BC6_71A6_44A5_BED3_D8F901105CDE
+FS0:\> echo -off

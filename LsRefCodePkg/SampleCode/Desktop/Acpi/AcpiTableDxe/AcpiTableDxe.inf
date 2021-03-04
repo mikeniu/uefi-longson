@@ -1,0 +1,94 @@
+## @file
+#  ACPI Table Protocol Driver
+#
+#  This driver initializes ACPI tables (Rsdp, Rsdt and Xsdt) and produces UEFI/PI
+#  services to install/uninstall/manage ACPI tables.
+#
+#  Copyright (c) 2006 - 2016, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2016, Linaro Ltd. All rights reserved.<BR>
+#  Copyright (c) 2018 Loongson Technology Corporation Limited (www.loongson.cn).
+#  All intellectual property rights(Copyright, Patent and Trademark) reserved.
+#
+#  Any violations of copyright or other intellectual property rights of the Loongson
+#  Technology Corporation Limited will be held accountable in accordance with the law,
+#  if you (or any of your subsidiaries, corporate affiliates or agents) initiate directly
+#  or indirectly any Intellectual Property Assertion or Intellectual Property Litigation:
+#  (i) against Loongson Technology Corporation Limited or any of its subsidiaries or corporate affiliates,
+#  (ii) against any party if such Intellectual Property Assertion or Intellectual Property Litigation arises
+#  in whole or in part from any software, technology, product or service of Loongson Technology Corporation Limited
+#  or any of its subsidiaries or corporate affiliates, or (iii) against any party relating to the Software.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+#  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+#  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION).
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = AcpiTableDxe
+  MODULE_UNI_FILE                = AcpiTableDxe.uni
+  FILE_GUID                      = 9622E42C-8E38-4a08-9E8F-54F784652F6B
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+
+  ENTRY_POINT                    = InitializeAcpiTableDxe
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  AcpiTableProtocol.c
+  AcpiTable.h
+  AcpiTable.c
+  AcpiSdt.h
+  AcpiSdt.c
+  Aml.c
+  AmlString.c
+  AmlOption.c
+  AmlChild.c
+  AmlNamespace.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  LsRefCodePkg/Loongson.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  UefiLib
+  DebugLib
+  BaseLib
+  PcdLib
+
+[Guids]
+  gEfiAcpi10TableGuid                           ## PRODUCES ## SystemTable
+  gEfiAcpiTableGuid                             ## PRODUCES ## SystemTable
+
+[FeaturePcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdInstallAcpiSdtProtocol  ## CONSUMES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemId            ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemTableId       ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultOemRevision      ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorId        ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiDefaultCreatorRevision  ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiExposedTableVersions    ## CONSUMES
+
+[Protocols]
+  gEfiAcpiTableProtocolGuid                     ## PRODUCES
+  gEfiAcpiSdtProtocolGuid                       ## PRODUCES
+
+[Depex]
+  TRUE
+
+[UserExtensions.TianoCore."ExtraFiles"]
+  AcpiTableDxeExtra.uni
